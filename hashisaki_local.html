@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>枦崎市（ローカル） - 完全版（タブ確実動作・多言語）</title>
+<style>
+  :root{
+    --sakura-1:#ffe6ef;
+    --sakura-2:#ffd6e0;
+    --accent:#d94b8b;
+    --accent-2:#2b8aef;
+    --muted:#666;
+    --bg:#f6f7f9;
+    --card:#ffffff;
+    --shadow: 0 8px 24px rgba(20,20,20,0.06);
+  }
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: "Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo","Segoe UI",system-ui,Roboto,-apple-system;
+    background:var(--bg);
+    color:#222;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    line-height:1.6;
+  }
+
+  /* Header */
+  header{
+    position:sticky;
+    top:0;
+    z-index:120;
+    background:linear-gradient(180deg,var(--sakura-1),#fff);
+    border-bottom:1px solid rgba(217,75,139,0.08);
+    backdrop-filter: blur(4px);
+  }
+  .header-inner{
+    max-width:1180px;
+    margin:0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 18px;
+    gap:16px;
+  }
+
+  .brand{display:flex;align-items:center;gap:14px;flex:0 0 auto}
+  .logo-box{width:72px;height:72px;border-radius:14px;background:linear-gradient(135deg,#ffd6e0,#fff0f4);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:0 0 72px;box-shadow:0 4px 12px rgba(217,75,139,0.06)}
+  .logo-box img{width:100%;height:100%;object-fit:contain;display:block}
+  .titles h1{margin:0;font-size:20px}
+  .titles p{margin:0;color:var(--muted);font-size:13px}
+
+  .header-center{flex:1;display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:220px}
+  .lang-row{font-size:14px;font-weight:700}
+  .zip-row{font-size:13px;color:var(--muted)}
+
+  .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+  .logo-select-btn{background:#fff;border:1px solid rgba(0,0,0,0.06);padding:6px 8px;border-radius:8px;cursor:pointer}
+
+  /* Navigation */
+  .main-nav-bar{background:linear-gradient(90deg,var(--sakura-2),#fff);border-top:1px solid rgba(217,75,139,0.06);border-bottom:1px solid rgba(217,75,139,0.06)}
+  .nav-inner{max-width:1180px;margin:0 auto;padding:10px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .nav-scroll{overflow-x:auto;white-space:nowrap;scroll-behavior:smooth;display:block;flex:1;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+  .nav-item{display:inline-block;padding:10px 16px;margin-right:8px;border-radius:999px;background:#fff;color:var(--accent);text-decoration:none;font-weight:800;box-shadow:0 2px 8px rgba(0,0,0,0.04);font-size:14px;cursor:pointer}
+  .nav-item:hover{background:#ffeef6}
+  .nav-item.active{background:linear-gradient(90deg,var(--accent),#ff7aa0);color:#fff}
+  .nav-actions{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+
+  /* Layout */
+  .container{max-width:1180px;margin:18px auto;padding:0 18px}
+  .content{display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start}
+  .card{background:var(--card);padding:18px;border-radius:14px;box-shadow:0 6px 18px rgba(20,20,20,0.04);border:1px solid rgba(0,0,0,0.03)}
+
+  #page-title{margin:0 0 12px 0;font-size:22px}
+  #page-body p{margin:0 0 12px 0;color:#333}
+
+  .announcements ul{list-style:none;padding:0;margin:0}
+  .announcements li{padding:14px;border-radius:10px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:flex-start;background:linear-gradient(180deg,#fff,#fff);border:1px solid rgba(0,0,0,0.03)}
+  .announcements .title{font-weight:800;color:#222}
+  .announcements .small{color:var(--muted);margin-top:6px;font-size:13px}
+  .announcements .date{color:var(--muted);font-size:13px;margin-left:12px;white-space:nowrap}
+
+  .btn-row{display:flex;gap:8px;margin-top:10px}
+  .btn-primary{background:var(--accent-2);color:#fff;border:none;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:800}
+  .btn-muted{background:#f0f0f0;color:#333;border:none;padding:10px 14px;border-radius:10px;cursor:pointer}
+
+  /* Ensure nav is clickable even if something overlaps */
+  .nav-item, .exp-item { position: relative; z-index: 9999 !important; pointer-events: auto !important; }
+  .main-nav-bar, #nav-scroll { position: relative; z-index: 9998 !important; pointer-events: auto !important; }
+
+  @media(max-width:980px){.content{grid-template-columns:1fr;gap:12px}.header-center{align-items:flex-start}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="logo-box" id="logo-box"><img id="logo-img" alt="市章" src="" /></div>
+      <div class="titles"><h1>枦崎市</h1><p class="small">HASHISAKIcity</p></div>
+    </div>
+
+    <div class="header-center">
+      <div class="lang-row">
+        言語：
+        <span id="lang-ja" style="color:var(--accent);cursor:pointer">日本語</span>
+        <span style="color:#ccc"> / </span>
+        <span id="lang-en" style="cursor:pointer">English</span>
+      </div>
+      <div class="zip-row">〒482-7088</div>
+    </div>
+
+    <div class="header-right">
+       <button id="choose-logo" class="logo-select-btn"></button>
+   </div>
+  </div>
+</header>
+
+<nav class="main-nav-bar" aria-label="主要ナビゲーション">
+  <div class="nav-inner">
+    <div id="nav-scroll" class="nav-scroll" role="navigation" aria-label="メニュー">
+      <span class="nav-item" data-nav="home" id="nav-home">ホーム</span>
+      <span class="nav-item" data-nav="qa" id="nav-qa">質問</span>
+      <span class="nav-item" data-nav="search" id="nav-search">検索/メニュー</span>
+      <span class="nav-item" data-nav="news" id="nav-news">ニュース</span>
+      <span class="nav-item" data-nav="events" id="nav-events">イベント/観光</span>
+      <span class="nav-item" data-nav="disaster" id="nav-disaster">防災</span>
+      <span class="nav-item" data-nav="childcare" id="nav-childcare">子育て</span>
+      <span class="nav-item" data-nav="tax" id="nav-tax">税金</span>
+      <span class="nav-item" data-nav="contact" id="nav-contact">窓口案内</span>
+    </div>
+
+    <div class="nav-actions">
+      <button id="nav-left" class="nav-arrow" aria-label="左へ">◀</button>
+      <button id="nav-right" class="nav-arrow" aria-label="右へ">▶</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="content">
+    <main class="card" id="main-card" role="main" aria-live="polite">
+      <h2 id="page-title">ホーム</h2>
+      <div id="page-body">
+        <section class="announcements">
+          <h3 style="margin-top:0">お知らせ</h3>
+          <ul id="announce-list"></ul>
+        </section>
+      </div>
+    </main>
+
+    <aside class="card side-panel">
+      <h3 id="form-title">申請フォーム（ローカル）</h3>
+      <form id="form" autocomplete="off">
+        <label id="label-name">お名前<input type="text" id="f-name" /></label>
+        <label id="label-email">メール<input type="email" id="f-email" /></label>
+        <label id="label-message">内容<textarea id="f-message" rows="5"></textarea></label>
+        <label id="label-file">添付（任意）<input type="file" id="f-file" accept="image/*" /></label>
+        <div id="preview"></div>
+        <div class="btn-row"><button type="submit" class="btn-primary" id="submit-btn">送信</button><button type="button" id="clear-btn" class="btn-muted">フォームクリア</button></div>
+      </form>
+      <hr>
+      <p class="small">データはこのブラウザのローカルに保存されます。管理: <a href="#" id="open-admin">管理画面</a></p>
+    </aside>
+  </div>
+</div>
+
+<div id="admin-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;padding:20px;z-index:200">
+  <div style="background:#fff;padding:18px;border-radius:12px;max-width:900px;margin:auto">
+    <h2 id="admin-title">管理画面（受信一覧）</h2>
+    <div style="margin-bottom:12px">
+      <button id="export-csv" class="btn-primary">CSVダウンロード</button>
+      <button id="close-admin" class="btn-muted" style="margin-left:8px">閉じる</button>
+      <button id="clear-all" class="btn-muted" style="margin-left:8px;background:#ffeef3;color:#a00">全データ削除</button>
+    </div>
+    <table id="admin-table" style="width:100%;border-collapse:collapse"><thead><tr><th>ID</th><th>名前</th><th>メール</th><th>内容</th><th>添付</th><th>日時</th></tr></thead><tbody></tbody></table>
+  </div>
+</div>
+
+<div id="panel-dialog" style="display:none;position:fixed;right:20px;bottom:20px;background:#fff;padding:14px;border-radius:10px;box-shadow:0 8px 24px rgba(20,20,20,0.06);width:320px;z-index:150">
+  <h4 id="panel-title">パネル</h4>
+  <div id="panel-body"></div>
+  <div style="text-align:right;margin-top:8px"><button id="close-panel" class="btn-muted">閉じる</button></div>
+</div>
+
+<footer style="text-align:center;padding:18px 0;color:#666">© 枦崎市（架空）</footer>
+
+<input type="file" id="logo-input" accept="image/*" style="display:none" />
+
+<script>
+/* Local keys and initial data */
+const KEY_ANN='hs_ann', KEY_SUB='hs_sub', KEY_LOGO='hs_logo_dataurl', LANG_KEY='hs_lang';
+function ensureInitialAnnouncements(){
+  if(!localStorage.getItem(KEY_ANN)){
+    const sample=[
+      {id:1,title:"市長選挙について",body:"投票日や期日前投票の案内です。",date:"2026-01-10"},
+      {id:2,title:"国勢調査にご協力をお願いします",body:"国勢調査の回答方法について。",date:"2026-01-05"},
+      {id:3,title:"マイナンバーカードに関するお知らせ",body:"申請窓口のご案内。",date:"2025-12-20"}
+    ];
+    localStorage.setItem(KEY_ANN, JSON.stringify(sample));
+  }
+  if(!localStorage.getItem(KEY_SUB)) localStorage.setItem(KEY_SUB, JSON.stringify([]));
+  if(!localStorage.getItem(LANG_KEY)) localStorage.setItem(LANG_KEY,'ja');
+}
+function renderAnnouncements(limit=6){
+  const ul=document.getElementById('announce-list');
+  const anns=JSON.parse(localStorage.getItem(KEY_ANN)||'[]');
+  ul.innerHTML='';
+  anns.slice(0,limit).forEach(a=>{
+    const li=document.createElement('li');
+    li.innerHTML=`<div style="max-width:78%"><strong>${escapeHtml(a.title)}</strong><div class="small">${escapeHtml(a.body)}</div></div><div style="color:var(--muted)">${escapeHtml(a.date)}</div>`;
+    ul.appendChild(li);
+  });
+}
+
+/* Multilingual page definitions */
+const PAGES_I18N = {
+  ja: {
+    home: { title: 'ホーム', body: `<section class="announcements"><h3 style="margin-top:0">お知らせ</h3><ul id="announce-list-inline"></ul></section><section style="margin-top:18px"><h3>市からのお知らせ</h3><p>枦崎市の公式ローカルサイトへようこそ。最新のお知らせやイベント情報、窓口案内を掲載しています。</p></section>` },
+    qa: { title: 'よくある質問（FAQ）', body: `<h3 style="margin-top:0">よくある質問</h3><p><strong>Q1:</strong> 窓口の受付時間は？<br><strong>A:</strong> 平日 8:30〜17:15 です。</p>` },
+    search: { title: '検索 / メニュー', body: `<h3 style="margin-top:0">サイト内検索</h3><div style="margin-top:12px"><input id="site-search-input" type="text" placeholder="例: 住民票" style="width:70%;padding:8px;border-radius:8px;border:1px solid #ddd" /><button id="site-search-btn" style="padding:8px 12px;margin-left:8px;border-radius:8px;background:var(--accent);color:#fff;border:none">検索</button></div><div id="site-search-results" style="margin-top:12px"></div>` },
+    news: { title: 'ニュース', body: `<h3 style="margin-top:0">ニュース</h3><p>市政、イベント、重要なお知らせなどを掲載します。</p>` },
+    events: { title: 'イベント / 観光', body: `<h3 style="margin-top:0">イベントカレンダー</h3><ul><li>伊乃尼祭り — 2026-07-20</li></ul>` },
+    disaster: { title: '防災', body: `<h3 style="margin-top:0">防災情報</h3><p>緊急連絡先や避難所情報を掲載しています。</p>` },
+    childcare: { title: '子育て', body: `<h3 style="margin-top:0">子育て支援</h3><p>保育所や育児相談の案内です。</p>` },
+    tax: { title: '税金', body: `<h3 style="margin-top:0">税金に関する手続き</h3><p>納付方法や減免制度の案内です。</p>` },
+    contact: { title: '窓口案内', body: `<h3 style="margin-top:0">窓口案内</h3><p>所在地・受付時間・アクセス情報を掲載しています。</p>` },
+    map: { title: '観光マップ', body: `<h3 style="margin-top:0">観光マップ</h3><p>見どころや散策ルートを紹介します。</p>` }
+  },
+  en: {
+    home: { title: 'Home', body: `<section class="announcements"><h3 style="margin-top:0">Announcements</h3><ul id="announce-list-inline"></ul></section><section style="margin-top:18px"><h3>From the City</h3><p>Welcome to Hashisaki City local site. We publish the latest announcements, events, and service information.</p></section>` },
+    qa: { title: 'FAQ', body: `<h3 style="margin-top:0">Frequently Asked Questions</h3><p><strong>Q1:</strong> What are office hours?<br><strong>A:</strong> Weekdays 8:30–17:15.</p>` },
+    search: { title: 'Search / Menu', body: `<h3 style="margin-top:0">Site Search</h3><div style="margin-top:12px"><input id="site-search-input" type="text" placeholder="e.g.: residence certificate" style="width:70%;padding:8px;border-radius:8px;border:1px solid #ddd" /><button id="site-search-btn" style="padding:8px 12px;margin-left:8px;border-radius:8px;background:var(--accent);color:#fff;border:none">Search</button></div><div id="site-search-results" style="margin-top:12px"></div>` },
+    news: { title: 'News', body: `<h3 style="margin-top:0">News</h3><p>City administration, events, and important notices are posted here.</p>` },
+    events: { title: 'Events / Tourism', body: `<h3 style="margin-top:0">Event Calendar</h3><ul><li>Inoo Festival — 2026-07-20</li></ul>` },
+    disaster: { title: 'Disaster', body: `<h3 style="margin-top:0">Disaster Information</h3><p>Emergency contacts and evacuation information.</p>` },
+    childcare: { title: 'Childcare', body: `<h3 style="margin-top:0">Childcare Support</h3><p>Information on nurseries and childcare consultations.</p>` },
+    tax: { title: 'Taxes', body: `<h3 style="margin-top:0">Tax Procedures</h3><p>Payment methods and exemption information.</p>` },
+    contact: { title: 'Contact', body: `<h3 style="margin-top:0">Service Counters</h3><p>Location, hours, and access information.</p>` },
+    map: { title: 'Tourist Map', body: `<h3 style="margin-top:0">Tourist Map</h3><p>Highlights and walking routes.</p>` }
+  }
+};
+
+/* Nav labels per language */
+const NAV_LABELS = {
+  ja: {
+    home: 'ホーム', qa: '質問', search: '検索/メニュー', news: 'ニュース',
+    events: 'イベント/観光', disaster: '防災', childcare: '子育て', tax: '税金', contact: '窓口案内'
+  },
+  en: {
+    home: 'Home', qa: 'FAQ', search: 'Search / Menu', news: 'News',
+    events: 'Events / Tourism', disaster: 'Disaster', childcare: 'Childcare', tax: 'Taxes', contact: 'Contact'
+  }
+};
+
+/* Helpers */
+function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function getLang(){ return localStorage.getItem(LANG_KEY) || 'ja'; }
+function setLang(l){ localStorage.setItem(LANG_KEY, l); }
+
+/* Update nav labels to current language */
+function applyNavLabels(){
+  const lang = getLang();
+  const labels = NAV_LABELS[lang] || NAV_LABELS['ja'];
+  Object.keys(labels).forEach(key=>{
+    const el = document.getElementById('nav-' + key);
+    if(el) el.textContent = labels[key];
+  });
+}
+
+/* Language-aware renderPage */
+function renderPage(key){
+  const lang = getLang();
+  const page = (PAGES_I18N[lang] && PAGES_I18N[lang][key]) ? PAGES_I18N[lang][key] : PAGES_I18N['ja'][key] || PAGES_I18N['ja'].home;
+  document.getElementById('page-title').textContent = page.title;
+  document.getElementById('page-body').innerHTML = page.body;
+  document.querySelectorAll('.nav-item').forEach(a=>a.classList.remove('active'));
+  const el = document.querySelector(`.nav-item[data-nav="${key}"]`);
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.exp-item').forEach(a=>a.classList.remove('active'));
+  const expActive = document.querySelector(`.exp-item[data-nav="${key}"]`);
+  if(expActive) expActive.classList.add('active');
+  const pageDef = PAGES_I18N[getLang()] && PAGES_I18N[getLang()][key];
+  if(pageDef && typeof pageDef.onrender === 'function') setTimeout(pageDef.onrender, 50);
+  try{ history.pushState({page:key}, '', '#'+key); }catch(e){}
+}
+
+/* UI language application */
+function applyLanguageUI(){
+  const lang = getLang();
+  const ja = document.getElementById('lang-ja'), en = document.getElementById('lang-en');
+  if(ja && en){
+    if(lang === 'ja'){ ja.style.color = 'var(--accent)'; en.style.color = '#555'; } else { en.style.color = 'var(--accent)'; ja.style.color = '#555'; }
+  }
+  // form placeholders and labels
+  const name = document.getElementById('f-name'), email = document.getElementById('f-email'), msg = document.getElementById('f-message');
+  const submit = document.getElementById('submit-btn'), clear = document.getElementById('clear-btn');
+  const formTitle = document.getElementById('form-title');
+  if(name) name.placeholder = (lang==='ja') ? '例: 山田 太郎' : 'e.g.: Taro Yamada';
+  if(email) email.placeholder = (lang==='ja') ? '例: you@example.com' : 'e.g.: you@example.com';
+  if(msg) msg.placeholder = (lang==='ja') ? '申請内容を入力' : 'Enter your message';
+  if(submit) submit.textContent = (lang==='ja') ? '送信' : 'Submit';
+  if(clear) clear.textContent = (lang==='ja') ? 'フォームクリア' : 'Clear';
+  if(formTitle) formTitle.textContent = (lang==='ja') ? '申請フォーム（ローカル）' : 'Application Form (Local)';
+  const adminTitle = document.getElementById('admin-title');
+  if(adminTitle) adminTitle.textContent = (lang==='ja') ? '管理画面（受信一覧）' : 'Admin (Submissions)';
+  // nav labels
+  applyNavLabels();
+  // more-link text if present in pages
+  const moreLinks = document.querySelectorAll('.more-link');
+  moreLinks.forEach(a => { a.textContent = (lang==='ja') ? 'もっとみる' : 'More'; });
+}
+
+/* Logo selection and persistence */
+const logoInput=document.getElementById('logo-input'), logoImg=document.getElementById('logo-img');
+document.getElementById('choose-logo').addEventListener('click', ()=> logoInput.click());
+logoInput.addEventListener('change', e=>{ const f=e.target.files[0]; if(!f) return; if(f.size>5_000_000){ alert((getLang()==='ja') ? '画像が大きすぎます（5MB以下推奨）。' : 'Image too large (<=5MB recommended).'); return; } const r=new FileReader(); r.onload=ev=>{ logoImg.src=ev.target.result; try{ localStorage.setItem(KEY_LOGO, ev.target.result); }catch(_){} }; r.readAsDataURL(f); });
+function loadLogoFromStorage(){ const d=localStorage.getItem(KEY_LOGO); if(d) logoImg.src=d; else logoImg.alt='🌸'; }
+
+/* Delegated nav handler */
+document.addEventListener('click', function(e){
+  const navItem = e.target.closest('.nav-item');
+  if(navItem){
+    e.preventDefault();
+    const key = navItem.getAttribute('data-nav') || navItem.dataset.nav || 'home';
+    renderPage(key);
+    return;
+  }
+}, false);
+
+/* Scroll arrows & drag */
+const navScroll=document.getElementById('nav-scroll');
+document.getElementById('nav-left').addEventListener('click', ()=> navScroll.scrollBy({left:-260,behavior:'smooth'}));
+document.getElementById('nav-right').addEventListener('click', ()=> navScroll.scrollBy({left:260,behavior:'smooth'}));
+let isDown=false,startX=0,scrollLeft=0;
+navScroll.addEventListener('pointerdown', e=>{ isDown=true; navScroll.setPointerCapture(e.pointerId); startX=e.clientX; scrollLeft=navScroll.scrollLeft; });
+navScroll.addEventListener('pointermove', e=>{ if(!isDown) return; const walk=(startX-e.clientX); navScroll.scrollLeft = scrollLeft + walk; });
+navScroll.addEventListener('pointerup', e=>{ isDown=false; try{ navScroll.releasePointerCapture(e.pointerId); }catch(_){} });
+navScroll.addEventListener('pointerleave', ()=>{ isDown=false; });
+
+/* Form handling */
+const form=document.getElementById('form'), preview=document.getElementById('preview');
+let currentFileData='';
+document.getElementById('f-file').addEventListener('change', e=>{ const f=e.target.files[0]; preview.innerHTML=''; currentFileData=''; if(!f) return; if(f.size>2_000_000){ alert((getLang()==='ja') ? '画像が大きすぎます（2MB以下推奨）。' : 'Image too large (<=2MB recommended).'); e.target.value=''; return; } const r=new FileReader(); r.onload=ev=>{ currentFileData=ev.target.result; const img=document.createElement('img'); img.src=currentFileData; img.style.maxWidth='100%'; img.style.borderRadius='8px'; preview.appendChild(img); }; r.readAsDataURL(f); });
+form.addEventListener('submit', e=>{ e.preventDefault(); const name=document.getElementById('f-name').value.trim()||((getLang()==='ja')?'匿名':'Anonymous'); const email=document.getElementById('f-email').value.trim()||''; const message=document.getElementById('f-message').value.trim()||''; const subs=JSON.parse(localStorage.getItem(KEY_SUB)||'[]'); subs.unshift({id:Date.now(),name,email,message,file:currentFileData||'',created_at:new Date().toISOString()}); localStorage.setItem(KEY_SUB, JSON.stringify(subs)); alert((getLang()==='ja') ? '送信しました（ローカル保存）' : 'Submitted (local)'); form.reset(); preview.innerHTML=''; currentFileData=''; renderAnnouncements(); });
+
+/* Admin modal */
+document.getElementById('open-admin').addEventListener('click', e=>{ e.preventDefault(); openAdmin(); });
+document.getElementById('close-admin').addEventListener('click', ()=>{ document.getElementById('admin-modal').style.display='none'; });
+document.getElementById('clear-all').addEventListener('click', ()=>{ if(confirm((getLang()==='ja')?'本当に全データを削除しますか？':'Delete all submissions?')){ localStorage.setItem(KEY_SUB, JSON.stringify([])); populateAdminTable(); } });
+document.getElementById('export-csv').addEventListener('click', exportCSV);
+function openAdmin(){ document.getElementById('admin-modal').style.display='flex'; populateAdminTable(); }
+function populateAdminTable(){ const tbody=document.querySelector('#admin-table tbody'); const subs=JSON.parse(localStorage.getItem(KEY_SUB)||'[]'); tbody.innerHTML=''; subs.forEach(s=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td style="padding:8px">${s.id}</td><td>${escapeHtml(s.name)}</td><td>${escapeHtml(s.email)}</td><td style="white-space:pre-wrap;max-width:360px">${escapeHtml(s.message)}</td><td>${s.file?'<a href="'+s.file+'" target="_blank">表示</a>':'-'}</td><td class="small">${escapeHtml(s.created_at)}</td>`; tbody.appendChild(tr); }); }
+function exportCSV(){ const subs=JSON.parse(localStorage.getItem(KEY_SUB)||'[]'); const rows=[['id','name','email','message','file','created_at']]; subs.forEach(s=>rows.push([s.id,s.name,s.email,s.message.replace(/\r?\n/g,'\\n'), s.file? '[image]':'', s.created_at])); const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n'); const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='submissions.csv'; a.click(); URL.revokeObjectURL(url); }
+
+/* Panel dialog */
+document.getElementById('close-panel').addEventListener('click', ()=> document.getElementById('panel-dialog').style.display='none');
+function openPanel(title, html){ document.getElementById('panel-title').textContent=title; document.getElementById('panel-body').innerHTML=html; document.getElementById('panel-dialog').style.display='block'; }
+
+/* Language buttons */
+document.getElementById('lang-ja').addEventListener('click', ()=>{ setLang('ja'); applyLanguageUI(); const current = location.hash ? location.hash.replace('#','') : 'home'; renderPage(current); });
+document.getElementById('lang-en').addEventListener('click', ()=>{ setLang('en'); applyLanguageUI(); const current = location.hash ? location.hash.replace('#','') : 'home'; renderPage(current); });
+
+/* Init */
+ensureInitialAnnouncements();
+renderAnnouncements();
+loadLogoFromStorage();
+applyLanguageUI();
+const initialHash = location.hash ? location.hash.replace('#','') : 'home';
+renderPage(initialHash);
+window.addEventListener('popstate', e=>{ const state = e.state && e.state.page ? e.state.page : (location.hash ? location.hash.replace('#','') : 'home'); renderPage(state); });
+
+/* ---------------------------
+   Nav click catcher (workaround)
+   - Keeps nav clickable even if something overlays it
+   --------------------------- */
+(function(){
+  const nav = document.getElementById('nav-scroll') || document.querySelector('.main-nav-bar');
+  if(!nav) return;
+  if(document.getElementById('__nav_click_catcher')) return;
+
+  const catcher = document.createElement('div');
+  catcher.id = '__nav_click_catcher';
+  catcher.style.position = 'fixed';
+  catcher.style.left = '0px';
+  catcher.style.top = '0px';
+  catcher.style.width = '0px';
+  catcher.style.height = '0px';
+  catcher.style.zIndex = 2147483646;
+  catcher.style.background = 'transparent';
+  catcher.style.pointerEvents = 'auto';
+  catcher.style.touchAction = 'manipulation';
+  catcher.style.cursor = 'pointer';
+  document.body.appendChild(catcher);
+
+  function updatePos(){
+    const r = nav.getBoundingClientRect();
+    catcher.style.left = r.left + 'px';
+    catcher.style.top = r.top + 'px';
+    catcher.style.width = r.width + 'px';
+    catcher.style.height = r.height + 'px';
+  }
+  updatePos();
+  window.addEventListener('resize', updatePos);
+  window.addEventListener('scroll', updatePos, true);
+
+  catcher.addEventListener('click', function(ev){
+    catcher.style.pointerEvents = 'none';
+    const el = document.elementFromPoint(ev.clientX, ev.clientY);
+    catcher.style.pointerEvents = 'auto';
+    const navItem = el && el.closest ? el.closest('.nav-item') : null;
+    if(navItem){
+      const key = navItem.getAttribute('data-nav') || navItem.dataset.nav || null;
+      if(typeof renderPage === 'function' && key) {
+        renderPage(key);
+      } else {
+        navItem.click();
+      }
+      return;
+    }
+    const items = Array.from(nav.querySelectorAll('.nav-item'));
+    if(items.length){
+      let best = null, bestDist = Infinity;
+      items.forEach(it=>{
+        const r = it.getBoundingClientRect();
+        const cx = (r.left + r.right)/2;
+        const cy = (r.top + r.bottom)/2;
+        const d = Math.hypot(cx - ev.clientX, cy - ev.clientY);
+        if(d < bestDist){ bestDist = d; best = it; }
+      });
+      if(best){
+        const key = best.getAttribute('data-nav') || best.dataset.nav || null;
+        if(typeof renderPage === 'function' && key) renderPage(key);
+        else best.click();
+      }
+    }
+  }, {passive:true});
+
+  window.__removeNavClickCatcher = function(){
+    try{ window.removeEventListener('resize', updatePos); window.removeEventListener('scroll', updatePos, true); catcher.remove(); delete window.__removeNavClickCatcher; }catch(e){}
+  };
+})();
+</script>
+</body>
+</html>
